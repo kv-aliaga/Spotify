@@ -3,7 +3,6 @@ package dao;
 import model.Album;
 import model.Artista;
 import util.Conexao;
-import util.Formatador;
 import util.Validador;
 import dao.Interface.DAOGenerico;
 
@@ -45,19 +44,18 @@ public class AlbumDAO implements DAOGenerico<Album> {
     @Override
     public ResultSet buscar(){
         try (Connection conn = conex.conectar()){
-            String sql = "SELECT al.id, al.nome, al.dt_lancamento, al.arq_capa, ar.nome\n" +
+            String sql = "SELECT al.id, al.nome as \"album\", al.dt_lancamento, al.arq_capa, ar.nome as \"artista\" \n" +
                     "FROM ALBUM al\n" +
-                    "JOIN ARTISTA ar ON al.COD_ARTISTA = ar.ID\n" +
-                    "WHERE al.id = ?";
+                    "JOIN ARTISTA ar ON al.COD_ARTISTA = ar.ID\n";
             Statement stmt = conn.createStatement();
 
-            this.rs = stmt.executeQuery(sql);
+            rs = stmt.executeQuery(sql);
+            mostrarResultSet(rs);
+            return rs;
 
         } catch (SQLException sqle){
             sqle.printStackTrace();
-        } finally {
-            return this.rs;
-        }
+        } return null;
     }
 
     @Override
@@ -129,6 +127,22 @@ public class AlbumDAO implements DAOGenerico<Album> {
             pstmt.setInt(1, id);
             pstmt.execute();
 
+        } catch (SQLException sqle){
+            sqle.printStackTrace();
+        }
+    }
+
+//    Mostrar ResultSet
+    public void mostrarResultSet(ResultSet rs){
+        try {
+            while (rs.next()){
+                String linha = "\n=== " + rs.getString("album") + " ===" +
+                        "\nID: " + rs.getInt("id") +
+                        "\nData de Lançamento: " + rs.getDate("dt_lancamento") +
+                        "\nArquivo da Capa: " + rs.getBytes("arq_capa") +
+                        "\nArtista: " + rs.getString("artista");
+                System.out.println(linha);
+            }
         } catch (SQLException sqle){
             sqle.printStackTrace();
         }

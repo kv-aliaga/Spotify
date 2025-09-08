@@ -1,5 +1,8 @@
 package util;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 public class Formatador {
@@ -14,6 +17,15 @@ public class Formatador {
         int segundos = (int) ((tempoDouble - minutos) * 100);
 
         return (minutos + "min " + segundos + "seg");
+    }
+
+//    Converter Caminho para bytes[]
+    public byte[] stringParaBytes(String caminho){
+        try {
+            return Files.readAllBytes(Paths.get(caminho));
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        } return null;
     }
 
 //    Método para testes
